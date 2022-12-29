@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Mangrove-Web-Development/performance-dashboard-api#readme",
   "dependencies": {
     "@notionhq/client": "^2.2.3",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "encoding": "^0.1.13",
     "express": "^4.18.2",

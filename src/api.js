@@ -2,6 +2,7 @@ const express = require("express");
 const serverless = require("serverless-http");
 const {Client} = require('@notionhq/client');
 const dotenv = require('dotenv');
+const cors = require('cors')
 dotenv.config();
 
 const notion = new Client({auth: process.env.NOTION_API_KEY});
@@ -27,6 +28,7 @@ router.get("/", (req, res) => {
   }).catch(error => { return res.send(error) });
 });
 
+app.use(cors());
 app.use(`/.netlify/functions/api`, router);
 
 module.exports = app;
