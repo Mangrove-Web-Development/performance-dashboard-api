@@ -9,12 +9,18 @@ const notion = new Client({auth: process.env.NOTION_API_KEY});
 const app = express();
 const router = express.Router();
 
-async function getReports(filter, sorts) {
+async function getReports(clientName) {
+  const filter = {
+    property: 'ClientName',
+    "rich_text": {
+      contains: clientName,
+    }
+  }
+
   try {
     const response = await notion.databases.query({
       database_id: process.env.NOTION_REPORTS_DATABASE_ID,
-      filter,
-      sorts,
+      filter: filter,
     });
     return response.results;
   } catch (error){
@@ -22,12 +28,10 @@ async function getReports(filter, sorts) {
   }
 }
 
-async function getClients(filter, sorts) {
+async function getClients() {
   try {
     const response = await notion.databases.query({
       database_id: process.env.NOTION_CLIENTS_DATABASE_ID,
-      filter,
-      sorts,
     });
     return response.results;
   } catch (error){
@@ -43,6 +47,12 @@ router.get("/reports", (req, res) => {
 
 router.get("/clients", (req, res) => {
   getClients().then(response => {
+    res.status(200).json(response);
+  }).catch(error => { return res.send(error) });
+});
+
+router.get("/clients/:clientName", (req, res) => {
+  getReports(req.params.clientName).then(response => {
     res.status(200).json(response);
   }).catch(error => { return res.send(error) });
 });
