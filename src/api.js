@@ -22,14 +22,33 @@ async function getReports(filter, sorts) {
   }
 }
 
-router.get("/", (req, res) => {
+async function getClients(filter, sorts) {
+  try {
+    const response = await notion.databases.query({
+      database_id: process.env.NOTION_CLIENTS_DATABASE_ID,
+      filter,
+      sorts,
+    });
+    return response.results;
+  } catch (error){
+    console.log(error.body);
+  }
+}
+
+router.get("/reports", (req, res) => {
   getReports().then(response => {
     res.status(200).json(response);
   }).catch(error => { return res.send(error) });
 });
 
+router.get("/clients", (req, res) => {
+  getClients().then(response => {
+    res.status(200).json(response);
+  }).catch(error => { return res.send(error) });
+});
+
 app.use(cors());
-app.use(`/.netlify/functions/api`, router);
+app.use(`/api`, router);
 
 module.exports = app;
 module.exports.handler = serverless(app);
