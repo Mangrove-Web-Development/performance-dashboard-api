@@ -9,11 +9,11 @@ const notion = new Client({auth: process.env.NOTION_API_KEY});
 const app = express();
 const router = express.Router();
 
-async function getReports(clientName) {
+async function getReports(clientId) {
   const filter = {
-    property: 'ClientName',
-    "rich_text": {
-      contains: clientName,
+    property: 'Client',
+    relation: {
+      contains: clientId,
     }
   }
 
@@ -51,8 +51,8 @@ router.get("/clients", (req, res) => {
   }).catch(error => { return res.send(error) });
 });
 
-router.get("/clients/:clientName", (req, res) => {
-  getReports(req.params.clientName).then(response => {
+router.get("/clients/:clientId", (req, res) => {
+  getReports(req.params.clientId).then(response => {
     res.status(200).json(response);
   }).catch(error => { return res.send(error) });
 });
