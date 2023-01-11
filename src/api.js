@@ -16,7 +16,6 @@ async function getReports(clientId) {
       contains: clientId,
     }
   }
-
   try {
     const response = await notion.databases.query({
       database_id: process.env.NOTION_REPORTS_DATABASE_ID,
@@ -39,6 +38,14 @@ async function getClients() {
   }
 }
 
+async function getReport(reportId) {
+  try {
+    return await notion.blocks.children.list({block_id: reportId, page_size: 50 });
+  } catch (error){
+    console.log(error.body);
+  }
+}
+
 router.get("/reports", (req, res) => {
   getReports().then(response => {
     res.status(200).json(response);
@@ -51,8 +58,14 @@ router.get("/clients", (req, res) => {
   }).catch(error => { return res.send(error) });
 });
 
-router.get("/clients/:clientId", (req, res) => {
-  getReports(req.params.clientId).then(response => {
+router.get("/client-reports/:clientId", (req, res) => {
+  getReports(req?.params?.clientId).then(response => {
+    res.status(200).json(response);
+  }).catch(error => { return res.send(error) });
+});
+
+router.get("/reports/:reportId", (req, res) => {
+  getReport(req?.params?.reportId).then(response => {
     res.status(200).json(response);
   }).catch(error => { return res.send(error) });
 });
